@@ -1,0 +1,26 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: dolina-frontend
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/invoker: public
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "5"
+        autoscaling.knative.dev/minScale: "0"
+        run.googleapis.com/cpu-throttling: "true"
+        run.googleapis.com/memory: "512Mi"
+        run.googleapis.com/cpu: "1"
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 60
+      containers:
+      - image: gcr.io/dolina-flower-order/dolina-frontend:v2
+        ports:
+        - containerPort: 8080
+  traffic:
+  - percent: 100
+    latestRevision: true
